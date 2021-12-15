@@ -128,7 +128,7 @@ for (serviceConfig in servicesConfig) {
             wrappers { //colorizeOutput()
             }
         }
-        JobUtil.setCommonAttributes(serviceBranchSonar)
+       
     }
 
     def serviceMasterBuild = job(masterBuildAndTest) {
