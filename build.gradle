@@ -15,3 +15,42 @@ dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.11'
 }
 
+task downloadArtifact {
+    def applicationName = (project.applicationName == '') ? "${project.name}".replace("-pipeline", "-service") : project.applicationName
+     println $applicationName
+    def artifactId = project.hasProperty('artifact_id') ? (artifact_id != '' ? artifact_id : URLEncoder.encode("[RELEASE]", "UTF-8")) : URLEncoder.encode("[RELEASE]", "UTF-8")
+    def artifactoryPath = appNameGroupMap[applicationName]
+    println "Artifactory Path : ${artifactoryPath}"
+    def deployProps = (targetEnvironment == 'production') ? prodDeployProps : nonProdDeployProps
+    def extension = (applicationName == warProjects[applicationName]) ? 'war' : 'jar'
+    def fileToDownload = "${applicationName}-${artifactId}.${extension}"
+    println "File to Download : ${fileToDownload}"
+    def artifactPathURL = "${deployProps.repo}/${artifactoryPath}/${applicationName}/${artifactId}/${fileToDownload}"
+
+    doLast {
+        download {
+            println "Application Name: ${applicationName}"
+            println "Artifact Path URL: ${artifactPathURL}"
+            src "${artifactPathURL}"
+            dest buildDir
+            username 'admin' //System.getenv("ARTIFACTORY_USERNAME")
+            password 'Admin123' //System.getenv("ARTIFACTORY_PASSWORD")
+            overwrite true
+        }
+    }
+}
+
+task wait {
+    doLast {
+        println("Waiting 15 seconds")
+        sleep(15000)
+    }
+}
+
+task deploy(dependsOn: ['downloadArtifact', 'wait']) {
+    wait.mustRunAfter downloadArtifact
+
+
+
+
+}

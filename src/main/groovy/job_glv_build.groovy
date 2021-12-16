@@ -128,7 +128,7 @@ for (serviceConfig in servicesConfig) {
             wrappers { //colorizeOutput()
             }
         }
-       
+
     }
 
     def serviceMasterBuild = job(masterBuildAndTest) {
@@ -166,7 +166,9 @@ for (serviceConfig in servicesConfig) {
                 useWrapper(true)
                 makeExecutable(true)
             }
+
         }
+
 
         publishers {
 
